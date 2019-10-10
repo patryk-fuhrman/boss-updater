@@ -114,27 +114,32 @@ const saveToDatabase = (monsters) => {
     const db = firebaseAdmin.database()
     const monstersRef = db.ref("monsters")
 
-    monstersRef.on('value', (data => {
-        const currentData = data.toJSON()
+    monstersRef.once('value', (data => {
+        const currentArray = data.val()
         const seenYesterdayNames = monsters
             .filter(monster => monster.seenYesterday)
             .map(monster => monster.name)
 
-        currentData.forEach(monsterInDB => {
-            if (seenYesterdayNames.indexOf(monsterInDB.name)) {
-                monstersRef.child(monsterInDB.name).update({
-                    name: monsterInDB.name,
+        const updatedArray = currentArray.map(monster => {
+            if (seenYesterdayNames.indexOf(monster.name) !== -1) {
+                return {
+                    name: monster.name,
                     lastSeen: 1,
-                })
+                }
             } else {
-                monstersRef.child(monsterInDB.name).update({
-                    name: monsterInDB.name,
-                    lastSeen: Number.parseInt(monsterInDB.lastSeen) + 1,
-                })
+                return {
+                    name: monster.name,
+                    lastSeen: Number.parseInt(monster.lastSeen) + 1,
+                }
             }
         })
+
+        monstersRef
+            .set(updatedArray)
+            .then(() => {
+                process.exit()
+            })
     }))
 }
 
 init()
-setTimeout(() => process.exit(), 10000)
