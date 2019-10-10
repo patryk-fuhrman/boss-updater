@@ -137,3 +137,4 @@ const saveToDatabase = (monsters) => {
 }
 
 init()
+setTimeout(() => process.exit(), 10000)
