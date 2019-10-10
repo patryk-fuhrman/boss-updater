@@ -1,0 +1,25 @@
+{
+  "name": "boss-updater",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patryk-fuhrman/boss-updater.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patryk-fuhrman/boss-updater/issues"
+  },
+  "homepage": "https://github.com/patryk-fuhrman/boss-updater#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "cloudscraper": "^4.3.0",
+    "firebase-admin": "^8.6.0",
+    "request": "^2.88.0"
+  }
+}
