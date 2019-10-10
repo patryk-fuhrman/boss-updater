@@ -49,10 +49,10 @@ const interestingBossNames = [
     'the imperor',
 
     // Rare monsters
-    'undead cavebear',
-    'midnight panther',
-    'draptor',
-    'crustacea gigantica',
+    'undead cavebears',
+    'midnight panthers',
+    'draptors',
+    'crustaceae giganticae',
 
     // Vampire bosses
     'arachir the ancient one',
