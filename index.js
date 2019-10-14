@@ -156,7 +156,7 @@ const saveToDatabase = (monsters) => {
 
 init()
 
-cron.schedule('00 12 * * *', () => {
+cron.schedule('* * * * *', () => {
     console.log('Updating boss list')
     update()
 })
