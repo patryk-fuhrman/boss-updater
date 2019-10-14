@@ -7,6 +7,8 @@ const cron = require('node-cron')
 const express = require('express')
 
 // const serviceAccount = require("./serviceAccountKey.json")
+const headers = Object.assign({}, cloudscraper.defaultParams.headers)
+const jar = cloudscraper.defaultParams.jar
 const url = 'https://www.tibia.com/community/?subtopic=killstatistics&world=Celesta'
 
 const app = express()
@@ -84,7 +86,7 @@ const init = () => {
     })
 
     // Local testing
-    // 
+
     // firebaseAdmin.initializeApp({
     //     credential: firebaseAdmin.credential.cert(serviceAccount),
     //     databaseURL: "https://tibia-bosses.firebaseio.com"
@@ -94,14 +96,44 @@ const init = () => {
 }
 
 const update = (cb) => {
-    cloudscraper(url).then(
-        data => {
-            const monsters = parseMonsters(data)
+    // Visiting the page to simulate real user behavior and to get cookies
+    cloudscraper.get({
+        url,
+        headers
+    }).then(body => {
+        let token
 
-            saveToDatabase(monsters)
-        },
-        err => console.error(err)
-    )
+        jar.getCookies(url).forEach(cookie => {
+            if (cookie.key.startsWith('__cfduid')) {
+                token = cookie.value
+            }
+        })
+
+        Object.assign(headers, {
+            'Referer': url,
+            // This request is normally made via XHR, let's blend in.
+            'X-Requested-With': 'XMLHttpRequest'
+        })
+
+        const options = {
+            url,
+            headers,
+            token,
+            json: true,
+            followRedirect: false,
+            followAllRedirects: false,
+            simple: false
+        }
+
+        cloudscraper(url, options).then(
+            data => {
+                const monsters = parseMonsters(data)
+
+                saveToDatabase(monsters)
+            },
+            err => console.error(err)
+        )
+    })
 }
 
 const parseMonsters = (data) => {
@@ -148,9 +180,6 @@ const saveToDatabase = (monsters) => {
 
         monstersRef
             .set(updatedArray)
-            .then(() => {
-                process.exit()
-            })
     }))
 }
 
