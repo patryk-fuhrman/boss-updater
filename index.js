@@ -125,9 +125,12 @@ const update = (cb) => {
             simple: false
         }
 
+        console.log('got options', options, 'getting list')
+
         cloudscraper(url, options).then(
             data => {
                 const monsters = parseMonsters(data)
+                console.log('got list', monsters)
 
                 saveToDatabase(monsters)
             },
@@ -157,6 +160,8 @@ const parseMonsters = (data) => {
 const saveToDatabase = (monsters) => {
     const db = firebaseAdmin.database()
     const monstersRef = db.ref("monsters")
+
+    console.log('Saving to db')
 
     monstersRef.once('value', (data => {
         const currentArray = data.val()
