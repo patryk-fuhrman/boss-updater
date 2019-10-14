@@ -2,9 +2,14 @@
 
 const cheerio = require('cheerio')
 const cloudscraper = require('cloudscraper')
-const firebaseAdmin = require("firebase-admin")
-const serviceAccount = require("./serviceAccountKey.json")
+const firebaseAdmin = require('firebase-admin')
+const cron = require('node-cron')
+const express = require('express')
+
+// const serviceAccount = require("./serviceAccountKey.json")
 const url = 'https://www.tibia.com/community/?subtopic=killstatistics&world=Celesta'
+
+const app = express()
 
 class Monster {
     constructor(name, seenYesterday) {
@@ -78,7 +83,14 @@ const init = () => {
         databaseURL: process.env.FIREBASE_DATABASE_URL,
     })
 
-    update()
+    // Local testing
+    // 
+    // firebaseAdmin.initializeApp({
+    //     credential: firebaseAdmin.credential.cert(serviceAccount),
+    //     databaseURL: "https://tibia-bosses.firebaseio.com"
+    // })
+
+    console.log('Init finished')
 }
 
 const update = (cb) => {
@@ -143,3 +155,10 @@ const saveToDatabase = (monsters) => {
 }
 
 init()
+
+cron.schedule('00 12 * * *', () => {
+    console.log('Updating boss list')
+    update()
+})
+
+app.listen(2137)
